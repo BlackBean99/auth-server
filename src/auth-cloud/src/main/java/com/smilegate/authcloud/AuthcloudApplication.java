@@ -9,5 +9,4 @@ public class AuthcloudApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AuthcloudApplication.class, args);
 	}
-
 }
