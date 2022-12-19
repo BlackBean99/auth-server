@@ -1,9 +1,5 @@
-spring:
-  application:
-    name:
-
 server:
-  port: 0 # ????? ?? ??
+  port: 0
 
 spring:
   datasource:
@@ -14,7 +10,7 @@ spring:
     hikari:
       maximum-pool-size: 20
   application:
-    name: user-service
+    name:auth-svc
   jpa:
 #    database-platform: org.hibernate.dialect.MySQL8Dialect
     properties:
