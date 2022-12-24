@@ -16,9 +16,12 @@ public class UserPersistenceAdapter implements LoadUserPort,RecordUserPort {
     }
 
     @Override
-    public boolean existsAccountByUserEmail(String email) {
-        return userRepository.existsAccountByUserEmail(email);
+    public boolean existsUserByUserEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 
 
+    public User loadUserByUserEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+    }
 }
