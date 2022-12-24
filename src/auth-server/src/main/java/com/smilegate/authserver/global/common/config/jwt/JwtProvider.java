@@ -4,12 +4,14 @@ import com.smilegate.authserver.application.port.in.JwtProviderUseCase;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Duration;
 import java.util.Date;
 
 
+@RequiredArgsConstructor
 public class JwtProvider implements JwtProviderUseCase {
     @Value("${spring.jwt.secret-key}")
     private String secretKey;
@@ -38,7 +40,7 @@ public class JwtProvider implements JwtProviderUseCase {
     public String createRefreshToken(String email, String role) {
         Long tokenInvalidTime = 1000L * 60 * 60 * 24; // 1d
         String refreshToken = this.createToken(email, role, tokenInvalidTime);
-//        redisService.setValues(email, refreshToken, Duration.ofMillis(tokenInvalidTime));
+        redisService.setValues(email, refreshToken, Duration.ofMillis(tokenInvalidTime));
         return refreshToken;
     }
 }
