@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -70,7 +71,6 @@ public class AccountController {
     public ResponseEntity<String> checkValidToken(HttpServletRequest request, String refreshToken) {
         Authentication authentication = jwtProviderUseCase.validateToken(request, refreshToken);
         if (!authentication.isAuthenticated()) {
-
             return new ResponseEntity<>(HttpStatus.OK);
         }
 //        토큰 형식이 잘못되면 BadRequest 반환 예외처리 추가예정
@@ -96,4 +96,33 @@ public class AccountController {
         loginResponseDto.put(expiredTime, responseDto);
         return new ResponseEntity<>(responseDto, httpHeaders, HttpStatus.OK);
     }
+
+    @Operation(summary = "토큰 재발행", description = "Refresh 토큰이 유효하면, Access Token,Refresh Token 재발행")
+    @ApiResponses({
+            @ApiResponse(description = "access, refreshToken"),
+            @ApiResponse(responseCode = "HttpStatus.OK", description = "OK")
+    })
+    @GetMapping("/api/account/re-issue")
+    public ResponseEntity<LoginResponseDto> reIssue(@Email String userEmail, String refreshToken, HttpServletRequest request) {
+        if(!jwtProviderUseCase.validateToken(request,refreshToken).isAuthenticated()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        LoginResponseDto responseDto = accountJwtUseCase.reIssueAccessToken(userEmail, refreshToken);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
+    //    로그아웃 기능 구현
+    @Operation(summary = "logout", description = "로그아웃_에이전트, 로그아웃시 redirect 페이지로 이동")
+    @ApiResponse(responseCode = "HttpStatus.OK", description = "OK")
+    @GetMapping("/api/account/logout")
+    public ResponseEntity<String> logout(String redirectUrl, HttpServletRequest request) throws URISyntaxException {
+//        7번부터 빼야 bearer(+스페이스바) 빼고 토큰만 추출 가능
+        String refreshToken = request.getHeader("Authorization").substring(7);
+        accountJwtUseCase.logout(refreshToken);
+        URI redirectUri = new URI(redirectUrl);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(redirectUri);
+        return new ResponseEntity<>("", httpHeaders, HttpStatus.OK);
+    }
+
 }

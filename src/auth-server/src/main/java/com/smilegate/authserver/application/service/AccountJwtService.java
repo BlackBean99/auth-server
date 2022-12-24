@@ -20,12 +20,28 @@ public class AccountJwtService implements AccountJwtUseCase {
 
     @Override
     @Transactional
+    public LoginResponseDto reIssueAccessToken(String email, String refreshedToken) {
+        User user = userPersistenceAdapter.loadUserByUserEmail(email);
+        String refreshToken = jwtProviderUseCase.createRefreshToken(email,user.getRole());
+        String accessToken = jwtProviderUseCase.createAccessToken(user.getEmail(), user.getRole());
+        return new LoginResponseDto(accessToken, refreshToken);
+    }
+
+
+    @Override
+    @Transactional
     public LoginResponseDto login(String email, String password) {
         User account = userPersistenceAdapter
                 .loadUserByUserEmail(email);
         checkPassword(password, account.getPassword());
         return createToken(account);
     }
+
+    @Override
+    public void logout(String refreshToken) {
+        jwtProviderUseCase.logout(refreshToken);
+    }
+
     @Transactional
     public LoginResponseDto createToken(User user){
         String accessToken = jwtProviderUseCase.createAccessToken(user.getEmail(), user.getRole());

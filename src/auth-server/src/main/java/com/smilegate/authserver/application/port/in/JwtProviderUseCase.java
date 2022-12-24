@@ -13,4 +13,7 @@ public interface JwtProviderUseCase {
     Date getExpiredTime(String refreshToken);
 
     Authentication validateToken(HttpServletRequest request, String refreshToken);
+
+    void logout(String refreshToken);
+
 }

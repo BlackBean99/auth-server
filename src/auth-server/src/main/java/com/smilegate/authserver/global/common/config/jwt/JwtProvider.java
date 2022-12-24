@@ -28,6 +28,14 @@ public class JwtProvider implements JwtProviderUseCase {
     private final RedisService redisService;
 
     @Override
+    public void logout(String refreshToken) {
+        long expiredAccessTokenTime = getExpiredTime(refreshToken).getTime() - new Date().getTime();
+        String userEmail = getEmail(refreshToken);
+        redisService.setValues(blackListATPrefix + refreshToken, userEmail, Duration.ofMillis(expiredAccessTokenTime));
+        redisService.deleteValues(userEmail); // Delete RefreshToken In Redis
+    }
+
+    @Override
     public String createAccessToken(String userId, String role) {
         long tokenInvalidTime = 1000L * 60 * 3;//3m
         return this.createToken(userId, role, tokenInvalidTime);
