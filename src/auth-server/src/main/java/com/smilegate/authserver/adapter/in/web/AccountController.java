@@ -25,6 +25,7 @@ public class AccountController {
     @ApiResponse(responseCode = "HttpStatus.CREATED", description = "CREATED")
     @PostMapping("/api/account")
     public ResponseEntity<String> signUp(@Valid SignUpRequestDto signUpUser) {
+        accountSignUpUseCase.isDuplicateEmail(signUpUser.getEmail());
         accountSignUpUseCase.signUp(signUpUser.getName(), signUpUser.getEmail(), signUpUser.getPassword());
         return new ResponseEntity<>("회원가입 성공", HttpStatus.CREATED);
     }

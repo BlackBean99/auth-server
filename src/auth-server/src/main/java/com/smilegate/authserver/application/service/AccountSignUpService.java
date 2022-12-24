@@ -27,5 +27,11 @@ public class AccountSignUpService implements AccountSignUpUseCase {
         userRepository.save(newUser);
     }
 
+    // 중복된 이메일 확인
+    @Override
+    public boolean isDuplicateEmail(String email) {
+        return userRepository.existsAccountByUserEmail(email);
+    }
+
 }
 
