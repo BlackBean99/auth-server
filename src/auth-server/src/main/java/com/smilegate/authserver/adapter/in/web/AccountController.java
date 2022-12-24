@@ -2,18 +2,22 @@ package com.smilegate.authserver.adapter.in.web;
 
 import com.smilegate.authserver.application.port.in.AccountJwtUseCase;
 import com.smilegate.authserver.application.port.in.AccountSignUpUseCase;
+import com.smilegate.authserver.application.port.in.JwtProviderUseCase;
 import com.smilegate.authserver.domain.dto.LoginRequestDto;
 import com.smilegate.authserver.domain.dto.LoginResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +36,7 @@ import java.util.Map;
 @Tag(name = "Account 관련 서비스", description = "회원가입, 로그인 등등")
 public class AccountController {
     private final AccountSignUpUseCase accountSignUpUseCase;
+    private final JwtProviderUseCase jwtProviderUseCase;
     private final AccountJwtUseCase accountJwtUseCase;
     //  회원가입 기능
     @Operation(summary = "회원가입", description = "회원 가입")
@@ -50,9 +55,26 @@ public class AccountController {
     @GetMapping("/api/account/check/email")
     public ResponseEntity<String> checkDuplicated(String userEmail) {
         if(accountSignUpUseCase.isDuplicateEmail(userEmail)){
-            return new ResponseEntity<>("중복된 이메일입니다", HttpStatus.FORBIDDEN)
+            return new ResponseEntity<>("중복된 이메일입니다", HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<>("사용할 수 있는 이메일입니다.", HttpStatus.ACCEPTED);
+    }
+
+    @PostAuthorize("hasRole('ROLE_USER')")
+    @Operation(summary = "토큰 사용가능 여부 확인", description = "Access Token 사용 가능 여부 확인")
+    @ApiResponses({
+            @ApiResponse(description = "access, refreshToken"),
+            @ApiResponse(responseCode = "HttpStatus.OK", description = "OK")
+    })
+    @GetMapping("/api/account/re-check")
+    public ResponseEntity<String> checkValidToken(HttpServletRequest request, String refreshToken) {
+        Authentication authentication = jwtProviderUseCase.validateToken(request, refreshToken);
+        if (!authentication.isAuthenticated()) {
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+//        토큰 형식이 잘못되면 BadRequest 반환 예외처리 추가예정
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
 
@@ -74,6 +96,4 @@ public class AccountController {
         loginResponseDto.put(expiredTime, responseDto);
         return new ResponseEntity<>(responseDto, httpHeaders, HttpStatus.OK);
     }
-
-
 }

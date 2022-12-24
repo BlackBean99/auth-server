@@ -5,7 +5,6 @@ import com.smilegate.authserver.application.port.in.AccountJwtUseCase;
 import com.smilegate.authserver.application.port.in.JwtProviderUseCase;
 import com.smilegate.authserver.domain.dto.LoginResponseDto;
 import com.smilegate.authserver.domain.user.User;
-import com.smilegate.authserver.domain.user.UserRepository;
 import jakarta.ws.rs.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,14 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AccountJwtService implements AccountJwtUseCase {
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
-    private final UserPersistenceAdapter accountPersistenceAdapter;
+    private final UserPersistenceAdapter userPersistenceAdapter;
     private final JwtProviderUseCase jwtProviderUseCase;
 
     @Override
     @Transactional
     public LoginResponseDto login(String email, String password) {
-        User account = accountPersistenceAdapter
+        User account = userPersistenceAdapter
                 .loadUserByUserEmail(email);
         checkPassword(password, account.getPassword());
         return createToken(account);
