@@ -3,6 +3,9 @@ package com.smilegate.authserver.adapter.in.web;
 
 import com.smilegate.authserver.application.port.out.LoadUserPort;
 import com.smilegate.authserver.domain.user.User;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,4 +32,16 @@ public class UserInfoController {
         List<User> listUser = loadUserPort.loadAll(page);
         return new ResponseEntity<>(listUser, HttpStatus.OK);
     }
+
+    @Operation(summary = "findUserById", description = "Id로 회원조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "Account Object", description = "검색 유저 return")
+    })
+    @GetMapping("/api/users")
+    public ResponseEntity<User> findUserById(Long userId) {
+        User user = loadUserPort.findById(userId);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+
 }

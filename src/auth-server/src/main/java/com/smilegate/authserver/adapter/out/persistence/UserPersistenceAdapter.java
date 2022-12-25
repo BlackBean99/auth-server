@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class UserPersistenceAdapter implements LoadUserPort, RecordUserPort {
+    private static final String NOT_FOUND_USER_MESSAGE = "존재하지 않는 유저입니다.";
     private final UserRepository userRepository;
 
     @Override
@@ -30,7 +31,13 @@ public class UserPersistenceAdapter implements LoadUserPort, RecordUserPort {
 
     @Override
     public User loadByEmal(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        return userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_MESSAGE));
+    }
+
+    @Transactional
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_MESSAGE));
     }
 
     @Override
@@ -41,6 +48,6 @@ public class UserPersistenceAdapter implements LoadUserPort, RecordUserPort {
     }
 
     public User loadUserByUserEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        return userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_MESSAGE));
     }
 }

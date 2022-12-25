@@ -8,4 +8,5 @@ public interface LoadUserPort {
     boolean existsByEmail(String email);
     User loadByEmal(String email);
     List<User> loadAll(Integer page);
+    User findById(Long id);
 }
