@@ -42,7 +42,7 @@ public class AccountController {
     //  회원가입 기능
     @Operation(summary = "회원가입", description = "회원 가입")
     @ApiResponse(responseCode = "HttpStatus.CREATED", description = "CREATED")
-    @PostMapping("/api/account")
+    @PostMapping("/api/accounts")
     public ResponseEntity<String> signUp(@Valid SignUpRequestDto signUpUser) {
         accountSignUpUseCase.isDuplicateEmail(signUpUser.getEmail());
         accountSignUpUseCase.signUp(signUpUser.getName(), signUpUser.getEmail(), signUpUser.getPassword());
@@ -53,7 +53,7 @@ public class AccountController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "HttpStatus.ACCEPTED", description = "CREATED")
     })
-    @GetMapping("/api/account/check/email")
+    @GetMapping("/api/accounts/check/email")
     public ResponseEntity<String> checkDuplicated(String userEmail) {
         if(accountSignUpUseCase.isDuplicateEmail(userEmail)){
             return new ResponseEntity<>("중복된 이메일입니다", HttpStatus.FORBIDDEN);
@@ -67,7 +67,7 @@ public class AccountController {
             @ApiResponse(description = "access, refreshToken"),
             @ApiResponse(responseCode = "HttpStatus.OK", description = "OK")
     })
-    @GetMapping("/api/account/re-check")
+    @GetMapping("/api/accounts/re-check")
     public ResponseEntity<String> checkValidToken(HttpServletRequest request, String refreshToken) {
         Authentication authentication = jwtProviderUseCase.validateToken(request, refreshToken);
         if (!authentication.isAuthenticated()) {
@@ -84,7 +84,7 @@ public class AccountController {
             @ApiResponse(description = "access, refreshToken"),
             @ApiResponse(responseCode = "HttpStatus.OK", description = "로그인 내부 인증 처리")
     })
-    @PostMapping("/api/account/login/process")
+    @PostMapping("/api/accounts/login/process")
     public ResponseEntity<LoginResponseDto> login(LoginRequestDto loginDto) throws URISyntaxException {
         LoginResponseDto responseDto = accountJwtUseCase.login(loginDto.getUserEmail(), loginDto.getPassword());
         URI redirectUri = new URI(loginDto.getRedirectUrl());
@@ -102,7 +102,7 @@ public class AccountController {
             @ApiResponse(description = "access, refreshToken"),
             @ApiResponse(responseCode = "HttpStatus.OK", description = "OK")
     })
-    @GetMapping("/api/account/re-issue")
+    @GetMapping("/api/accounts/re-issue")
     public ResponseEntity<LoginResponseDto> reIssue(@Email String userEmail, String refreshToken, HttpServletRequest request) {
         if(!jwtProviderUseCase.validateToken(request,refreshToken).isAuthenticated()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -114,7 +114,7 @@ public class AccountController {
     //    로그아웃 기능 구현
     @Operation(summary = "logout", description = "로그아웃_에이전트, 로그아웃시 redirect 페이지로 이동")
     @ApiResponse(responseCode = "HttpStatus.OK", description = "OK")
-    @GetMapping("/api/account/logout")
+    @GetMapping("/api/accounts/logout")
     public ResponseEntity<String> logout(String redirectUrl, HttpServletRequest request) throws URISyntaxException {
 //        7번부터 빼야 bearer(+스페이스바) 빼고 토큰만 추출 가능
         String refreshToken = request.getHeader("Authorization").substring(7);
