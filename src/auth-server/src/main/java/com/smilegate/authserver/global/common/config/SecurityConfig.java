@@ -3,6 +3,7 @@ package com.smilegate.authserver.global.common.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smilegate.authserver.application.service.AccessFailHandler;
 import com.smilegate.authserver.application.service.LoginFailHandler;
+import com.smilegate.authserver.application.service.LoginSuccessHandler;
 import com.smilegate.authserver.global.common.config.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final ObjectMapper objectMapper;
     private final AccessFailHandler accessFailHandler;
+    private final LoginSuccessHandler loginSuccessHandler;
     private final LoginFailHandler loginFailHandler;
     private final String UNAUTHORIZEd_CUSTOM_MESSAGE = "인증받지 못한 유저입니다. 로그인을 재시도해주세요.";
 
@@ -43,6 +45,7 @@ public class SecurityConfig {
                 .loginProcessingUrl("/api/accounts/login/process")
 //                .successHandler()
                 .failureHandler(loginFailHandler)
+                .successHandler(loginSuccessHandler)
                 .and()
                 .build();
     }

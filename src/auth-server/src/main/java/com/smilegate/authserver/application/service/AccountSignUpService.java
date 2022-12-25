@@ -1,8 +1,8 @@
 package com.smilegate.authserver.application.service;
 
-import com.smilegate.authserver.adapter.out.persistence.RecordUserPort;
 import com.smilegate.authserver.application.port.in.AccountSignUpUseCase;
 import com.smilegate.authserver.application.port.out.LoadUserPort;
+import com.smilegate.authserver.application.port.out.RecordUserPort;
 import com.smilegate.authserver.domain.auth.ConfirmationToken;
 import com.smilegate.authserver.domain.auth.ConfirmationTokenRepository;
 import com.smilegate.authserver.domain.user.User;
@@ -43,7 +43,7 @@ public class AccountSignUpService implements AccountSignUpUseCase {
     @Override
     public void confirmAccount(String token) {
         ConfirmationToken confirmationToken = confirmationTokenRepository.findById(UUID.fromString(token)).orElseThrow(() -> new IllegalArgumentException("인증받지 못한 유저입니다."));
-        User user = loadUserPort.loadByEmal(confirmationToken.getEmail()).orElseThrow(() -> new IllegalArgumentException("해당하는 유저가 존재하지 않습니다."));
+        User user = loadUserPort.loadByEmal(confirmationToken.getEmail());
         user.isEnabled();
     }
 }

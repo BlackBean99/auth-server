@@ -1,16 +1,21 @@
 package com.smilegate.authserver.adapter.out.persistence;
 
 import com.smilegate.authserver.application.port.out.LoadUserPort;
+import com.smilegate.authserver.application.port.out.RecordUserPort;
 import com.smilegate.authserver.domain.user.User;
 import com.smilegate.authserver.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class UserPersistenceAdapter implements LoadUserPort,RecordUserPort {
+public class UserPersistenceAdapter implements LoadUserPort, RecordUserPort {
     private final UserRepository userRepository;
 
     @Override
@@ -24,8 +29,15 @@ public class UserPersistenceAdapter implements LoadUserPort,RecordUserPort {
     }
 
     @Override
-    public Optional<User> loadByEmal(String email) {
-        return userRepository.findByEmail(email);
+    public User loadByEmal(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+    }
+
+    @Override
+    @Transactional
+    public List<User> loadAll(Integer page){
+        Pageable pageable = PageRequest.of(page, 20);
+        return userRepository.findAll(pageable).stream().collect(Collectors.toList());
     }
 
     public User loadUserByUserEmail(String email) {

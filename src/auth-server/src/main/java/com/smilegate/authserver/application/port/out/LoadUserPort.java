@@ -2,10 +2,10 @@ package com.smilegate.authserver.application.port.out;
 
 import com.smilegate.authserver.domain.user.User;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface LoadUserPort {
     boolean existsByEmail(String email);
-    Optional<User> loadByEmal(String email);
-
+    User loadByEmal(String email);
+    List<User> loadAll(Integer page);
 }

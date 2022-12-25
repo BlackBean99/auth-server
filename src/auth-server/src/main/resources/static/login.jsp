@@ -16,6 +16,7 @@
     </c:if>
     USER : <input type="text" name="user_id"><br>
     PASSWORD : <input type="password" name="user_pw"><br>
+    <input type="checkbox" name="_spring_security_remember_me">로그인 유지<br>
     <input type="submit" value="Login">
 </form>
 </body>
