@@ -144,7 +144,4 @@ public class AccountController {
 //        7번부터 빼야 bearer(+스페이스바) 빼고 토큰만 추출 가능
         return new ResponseEntity<>("이메일 승인 완료", HttpStatus.OK);
     }
-
-
-
 }

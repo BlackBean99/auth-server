@@ -34,7 +34,6 @@ public class SecurityConfig {
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)  //JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣는다
                 .exceptionHandling()
-
                 .and()
                 .build();
     }
