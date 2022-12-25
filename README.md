@@ -39,13 +39,13 @@ cd deploy
 
 전체 아키텍처
 
-![Untitled](resources/Untitled.png)
+![1](https://user-images.githubusercontent.com/54030889/209473180-ff1f6d48-8d10-40bf-bc97-d692e41dd29e.png)
 
 ### 내부 아키텍처
 
 인증 서버 내부는 헥사고날 아키텍처로 의존성 분리를 초점으로 구현
 
-![Untitled](resources/2.png)
+![2](https://user-images.githubusercontent.com/54030889/209473198-df32239c-4920-4189-845b-e17eb0e20060.png)
 
 - Eureka 서버에 등록시켜서 실제 통신은 GateWay 통해서 라우팅된다,
 
@@ -88,7 +88,7 @@ cd deploy
     - 현재 사용할 수 없는 경우일 경우
     - FrailureHandler 연동
 
-![Untitled](resources/3.png)
+![3](./resources/3.png)
 
 ### User
 
