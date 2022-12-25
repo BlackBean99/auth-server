@@ -6,4 +6,6 @@ import com.smilegate.authserver.domain.user.User;
 public interface RecordUserPort {
     User save(User account);
     User updateUser(UserUpdateRequestDto userUpdateRequestDto);
+
+    boolean deleteUser(UserUpdateRequestDto userUpdateRequestDto);
 }

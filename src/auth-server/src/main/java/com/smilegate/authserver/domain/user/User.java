@@ -94,4 +94,8 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.email = userUpdateRequestDto.getEmail();
         this.name = userUpdateRequestDto.getName();
     }
+
+    public void delete(User user){
+        this.enabled = false;
+    }
 }

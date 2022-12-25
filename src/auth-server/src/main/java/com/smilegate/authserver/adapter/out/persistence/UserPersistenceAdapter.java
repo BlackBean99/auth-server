@@ -34,6 +34,14 @@ public class UserPersistenceAdapter implements LoadUserPort, RecordUserPort {
     }
 
     @Override
+    public boolean deleteUser(UserUpdateRequestDto userUpdateRequestDto) {
+        User user = userRepository.findByNameAndEmail(userUpdateRequestDto.getName(), userUpdateRequestDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_MESSAGE));
+        user.delete(user);
+        return true;
+    }
+
+    @Override
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }

@@ -18,7 +18,6 @@ spring:
     port:6379
     host:localhost
   jpa:
-#    database-platform: org.hibernate.dialect.MySQL8Dialect
     properties:
       hibernate:
         dialect:
@@ -35,6 +34,30 @@ spring:
     secret-key: SECRET_KEY
     blacklist:
       access-token: BlackList_AccessToken_
+
+  mail:
+    host: stmp.gmail.com
+    port: 587
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          auth: false
+          timeout: 5000
+          starttls.enabled: true
+
+springdoc:
+  version: v1
+  swagger-ui:
+    path: /swagger-ui.html
+    url: /swagger-ui.html
+  packages-to-scan: com.smilegate.authserver
+  cache:
+    disabled: true
+  api-docs:
+    groups:
+      enabled: true
 
 
 eureka:

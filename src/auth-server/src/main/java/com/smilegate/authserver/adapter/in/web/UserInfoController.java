@@ -57,9 +57,18 @@ public class UserInfoController {
     @ApiResponses({
             @ApiResponse(description = "수정된 회원 조회 return")
     })
-    @PostMapping("/api/users/")
+    @PostMapping("/api/users/update")
     public ResponseEntity<User> updateUser(HttpServletRequest request, UserUpdateRequestDto userUpdateRequestDto) {
         return new ResponseEntity<>(recordUserPort.updateUser(userUpdateRequestDto), HttpStatus.OK);
     }
 
+    @Operation(summary = "회원삭제", description = "회원 삭제")
+    @ApiResponses({
+            @ApiResponse(description = "회원 삭제 Response")
+    })
+    @PostMapping("/api/users/delete")
+    public ResponseEntity<String> deleteUser(UserUpdateRequestDto userUpdateRequestDto) {
+        recordUserPort.deleteUser(userUpdateRequestDto);
+        return new ResponseEntity<>("삭제 성공", HttpStatus.OK);
+    }
 }

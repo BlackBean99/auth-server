@@ -8,4 +8,4 @@ public interface ConfirmationTokenUseCase {
     public UUID createEmailConfirmationToken(String receiverEmail);
 //    public String createEmailConfirmationToken(String receiverEmail);
     public ConfirmationToken findByIdAndExpirationDateAfterAndExpired(UUID confirmationTokenId);
-    }
+}
