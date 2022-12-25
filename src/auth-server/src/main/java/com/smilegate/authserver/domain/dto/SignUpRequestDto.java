@@ -1,4 +1,4 @@
-package com.smilegate.authserver.adapter.in.web;
+package com.smilegate.authserver.domain.dto;
 
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;

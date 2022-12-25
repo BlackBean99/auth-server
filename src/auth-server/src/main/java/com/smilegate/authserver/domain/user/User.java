@@ -50,6 +50,7 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.password = password;
         this.email = email;
         this.role = "USER";
+        this.enabled = false;
     }
 
     @Override
@@ -84,6 +85,6 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return this.enabled = true;
     }
 }

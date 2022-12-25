@@ -2,9 +2,11 @@ package com.smilegate.authserver.adapter.in.web;
 
 import com.smilegate.authserver.application.port.in.AccountJwtUseCase;
 import com.smilegate.authserver.application.port.in.AccountSignUpUseCase;
+import com.smilegate.authserver.application.port.in.ConfirmationTokenUseCase;
 import com.smilegate.authserver.application.port.in.JwtProviderUseCase;
 import com.smilegate.authserver.domain.dto.LoginRequestDto;
 import com.smilegate.authserver.domain.dto.LoginResponseDto;
+import com.smilegate.authserver.domain.dto.SignUpRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -19,10 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -39,6 +38,7 @@ public class AccountController {
     private final AccountSignUpUseCase accountSignUpUseCase;
     private final JwtProviderUseCase jwtProviderUseCase;
     private final AccountJwtUseCase accountJwtUseCase;
+    private final ConfirmationTokenUseCase confirmationTokenUseCase;
     //  회원가입 기능
     @Operation(summary = "회원가입", description = "회원 가입")
     @ApiResponse(responseCode = "HttpStatus.CREATED", description = "CREATED")
@@ -124,5 +124,27 @@ public class AccountController {
         httpHeaders.setLocation(redirectUri);
         return new ResponseEntity<>("", httpHeaders, HttpStatus.OK);
     }
+
+    //    로그아웃 기능 구현
+    @Operation(summary = "이메일 인증 보내기", description = "회원가입시 이메일 인증 보내기")
+    @ApiResponse(responseCode = "HttpStatus.OK", description = "OK")
+    @GetMapping("/api/accounts/confirm")
+    public ResponseEntity<String> sendConfirmEmail(String receiverEmail, HttpServletRequest request){
+//        7번부터 빼야 bearer(+스페이스바) 빼고 토큰만 추출 가능
+        confirmationTokenUseCase.createEmailConfirmationToken(receiverEmail);
+        return new ResponseEntity<>("", HttpStatus.OK);
+    }
+
+    //    로그아웃 기능 구현
+    @Operation(summary = "이메일 인증 승인", description = "이메일 인증 확인후 계정 승인.")
+    @ApiResponse(responseCode = "HttpStatus.OK", description = "OK")
+    @GetMapping("/api/accounts/confirm/{token}")
+    public ResponseEntity<String> confirmEmail(@PathVariable String token){
+        accountSignUpUseCase.confirmAccount(token);
+//        7번부터 빼야 bearer(+스페이스바) 빼고 토큰만 추출 가능
+        return new ResponseEntity<>("이메일 승인 완료", HttpStatus.OK);
+    }
+
+
 
 }

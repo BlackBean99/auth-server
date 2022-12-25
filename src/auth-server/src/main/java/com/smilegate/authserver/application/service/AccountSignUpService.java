@@ -1,13 +1,18 @@
 package com.smilegate.authserver.application.service;
 
+import com.smilegate.authserver.adapter.out.persistence.RecordUserPort;
 import com.smilegate.authserver.application.port.in.AccountSignUpUseCase;
+import com.smilegate.authserver.application.port.out.LoadUserPort;
+import com.smilegate.authserver.domain.auth.ConfirmationToken;
+import com.smilegate.authserver.domain.auth.ConfirmationTokenRepository;
 import com.smilegate.authserver.domain.user.User;
-import com.smilegate.authserver.domain.user.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -15,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(rollbackFor = Exception.class)
 public class AccountSignUpService implements AccountSignUpUseCase {
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
+    private final LoadUserPort loadUserPort;
+    private final RecordUserPort recordUserPort;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
 
     //   회원가입
     @Override
@@ -23,15 +30,21 @@ public class AccountSignUpService implements AccountSignUpUseCase {
     public void signUp(String userName, String userEmail, String password) {
         // 중복검증
         String encodePassword = passwordEncoder.encode(password);
-        User newUser = new User(userName,encodePassword,userEmail);
-        userRepository.save(newUser);
+        User newUser = new User(userName, encodePassword, userEmail);
+        recordUserPort.save(newUser);
     }
 
     // 중복된 이메일 확인
     @Override
     public boolean isDuplicateEmail(String email) {
-        return userRepository.existsAccountByUserEmail(email);
+        return loadUserPort.existsByEmail(email);
     }
 
+    @Override
+    public void confirmAccount(String token) {
+        ConfirmationToken confirmationToken = confirmationTokenRepository.findById(UUID.fromString(token)).orElseThrow(() -> new IllegalArgumentException("인증받지 못한 유저입니다."));
+        User user = loadUserPort.loadByEmal(confirmationToken.getEmail()).orElseThrow(() -> new IllegalArgumentException("해당하는 유저가 존재하지 않습니다."));
+        user.isEnabled();
+    }
 }
 
