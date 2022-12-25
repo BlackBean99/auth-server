@@ -1,6 +1,7 @@
 package com.smilegate.authserver.domain.user;
 
 
+import com.smilegate.authserver.adapter.in.web.UserUpdateRequestDto;
 import com.smilegate.authserver.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -36,6 +37,7 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     @NotNull
     private String email;
+
     @Column(nullable = false)
     private String role;
 
@@ -86,5 +88,10 @@ public class User extends BaseTimeEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return this.enabled = true;
+    }
+
+    public void update(UserUpdateRequestDto userUpdateRequestDto) {
+        this.email = userUpdateRequestDto.getEmail();
+        this.name = userUpdateRequestDto.getName();
     }
 }

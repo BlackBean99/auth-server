@@ -1,5 +1,6 @@
 package com.smilegate.authserver.adapter.out.persistence;
 
+import com.smilegate.authserver.adapter.in.web.UserUpdateRequestDto;
 import com.smilegate.authserver.application.port.out.LoadUserPort;
 import com.smilegate.authserver.application.port.out.RecordUserPort;
 import com.smilegate.authserver.domain.user.User;
@@ -25,6 +26,14 @@ public class UserPersistenceAdapter implements LoadUserPort, RecordUserPort {
     }
 
     @Override
+    public User updateUser(UserUpdateRequestDto userUpdateRequestDto) {
+        User user = userRepository.findByNameAndEmail(userUpdateRequestDto.getName(), userUpdateRequestDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_MESSAGE));
+        user.update(userUpdateRequestDto);
+        return user;
+    }
+
+    @Override
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
@@ -38,6 +47,11 @@ public class UserPersistenceAdapter implements LoadUserPort, RecordUserPort {
     public User findById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_MESSAGE));
+    }
+
+    @Override
+    public List<User> loadByName(String userName) {
+        return userRepository.findByName(userName);
     }
 
     @Override

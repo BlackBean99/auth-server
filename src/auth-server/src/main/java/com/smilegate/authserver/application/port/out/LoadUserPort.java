@@ -9,4 +9,5 @@ public interface LoadUserPort {
     User loadByEmal(String email);
     List<User> loadAll(Integer page);
     User findById(Long id);
+    List<User> loadByName(String userName);
 }

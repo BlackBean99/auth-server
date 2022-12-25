@@ -21,6 +21,7 @@ public class SecurityConfig {
     private final AccessFailHandler accessFailHandler;
     private final LoginSuccessHandler loginSuccessHandler;
     private final LoginFailHandler loginFailHandler;
+
     private final String UNAUTHORIZEd_CUSTOM_MESSAGE = "인증받지 못한 유저입니다. 로그인을 재시도해주세요.";
 
 
@@ -34,7 +35,6 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()// 시큐리티 처리에 HttpServeltRequest를 사용합니다.
                 .requestMatchers("/api/accounts/**").permitAll()
-                .requestMatchers("/non/**").permitAll()
                 .requestMatchers("/api/users/**").hasRole("USER")
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)  //JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣는다
