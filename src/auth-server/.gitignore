@@ -35,6 +35,11 @@ com.smilegate.authserver/
 /dist/
 /nbdist/
 /.nb-gradle/
+**src/main/generated
+**src/main/generated/**
+
 
 ### VS Code ###
 .vscode/
+
+

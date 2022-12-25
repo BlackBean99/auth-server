@@ -43,7 +43,10 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 
 }
-
+jar {
+//	Docker plain.jar 생성 방지
+	enabled = false
+}
 tasks.named('test') {
 	useJUnitPlatform()
 }
