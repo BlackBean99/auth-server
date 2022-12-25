@@ -1,6 +1,8 @@
 package com.smilegate.authserver.global.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.smilegate.authserver.application.service.AccessFailHandler;
+import com.smilegate.authserver.application.service.LoginFailHandler;
 import com.smilegate.authserver.global.common.config.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +17,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final ObjectMapper objectMapper;
-
+    private final AccessFailHandler accessFailHandler;
+    private final LoginFailHandler loginFailHandler;
     private final String UNAUTHORIZEd_CUSTOM_MESSAGE = "인증받지 못한 유저입니다. 로그인을 재시도해주세요.";
 
 
@@ -34,7 +37,14 @@ public class SecurityConfig {
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)  //JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣는다
                 .exceptionHandling()
+                .accessDeniedHandler(accessFailHandler)
+                .and()
+                .formLogin()
+                .loginProcessingUrl("/api/accounts/login/process")
+//                .successHandler()
+                .failureHandler(loginFailHandler)
                 .and()
                 .build();
     }
+
 }

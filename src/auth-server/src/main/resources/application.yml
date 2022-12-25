@@ -14,6 +14,9 @@ spring:
       maximum-pool-size: 20
   application:
     name:auth-server
+  redis:
+    port:6379
+    host:localhost
   jpa:
 #    database-platform: org.hibernate.dialect.MySQL8Dialect
     properties:
@@ -28,6 +31,11 @@ spring:
     redis:
       host: localhost
       port: 6379
+  jwt:
+    secret-key: SECRET_KEY
+    blacklist:
+      access-token: BlackList_AccessToken_
+
 
 eureka:
   client:
